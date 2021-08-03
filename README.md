@@ -10,3 +10,6 @@ These include helpers and extension methods for:
   - TryToEnum
 - Strings
   - Or
+- IDistributedCache
+  - GetOrSetAsync
+  - GetOrSetStringAsync
