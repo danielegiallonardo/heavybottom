@@ -12,10 +12,10 @@ namespace Microsoft.Extensions.Caching.Distributed
         /// <param name="cache">The cache.</param>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
-        /// <param name="TTL">The TTL.</param>
+        /// <param name="options">The options.</param>
         /// <param name="token">The cancellation token.</param>
         /// <returns></returns>
-        public static async Task<byte[]> GetOrSetAsync(this IDistributedCache cache, string key, Func<Task<byte[]>> value, TimeSpan? TTL, CancellationToken token = default)
+        public static async Task<byte[]> GetOrSetAsync(this IDistributedCache cache, string key, Func<Task<byte[]>> value, DistributedCacheEntryOptions options = null, CancellationToken token = default)
         {
             byte[] result = await cache.GetAsync(key, token);
             if (result == null)
@@ -24,7 +24,7 @@ namespace Microsoft.Extensions.Caching.Distributed
 
                 if (result != null)
                 {
-                    await cache.SetAsync(key, result, new DistributedCacheEntryOptions() { AbsoluteExpirationRelativeToNow = TTL }, token);
+                    await cache.SetAsync(key, result, options, token);
                 }
             }
             return result;
@@ -36,10 +36,10 @@ namespace Microsoft.Extensions.Caching.Distributed
         /// <param name="cache">The cache.</param>
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
-        /// <param name="TTL">The TTL.</param>
+        /// <param name="options">The options.</param>
         /// <param name="token">The token.</param>
         /// <returns></returns>
-        public static async Task<string> GetOrSetStringAsync(this IDistributedCache cache, string key, Func<Task<string>> value, TimeSpan? TTL, CancellationToken token = default)
+        public static async Task<string> GetOrSetStringAsync(this IDistributedCache cache, string key, Func<Task<string>> value, DistributedCacheEntryOptions options = null, CancellationToken token = default)
         {
             string result = await cache.GetStringAsync(key, token);
             if (result == null)
@@ -48,7 +48,7 @@ namespace Microsoft.Extensions.Caching.Distributed
 
                 if (result != null)
                 {
-                    await cache.SetStringAsync(key, result, new DistributedCacheEntryOptions() { AbsoluteExpirationRelativeToNow = TTL }, token);
+                    await cache.SetStringAsync(key, result, options, token);
                 }
             }
             return result;
