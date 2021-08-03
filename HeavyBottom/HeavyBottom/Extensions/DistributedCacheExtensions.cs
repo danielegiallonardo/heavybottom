@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Microsoft.Extensions.Caching.Distributed
@@ -12,17 +13,18 @@ namespace Microsoft.Extensions.Caching.Distributed
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
         /// <param name="TTL">The TTL.</param>
+        /// <param name="token">The cancellation token.</param>
         /// <returns></returns>
-        public static async Task<byte[]> GetOrSetAsync(this IDistributedCache cache, string key, Func<Task<byte[]>> value, TimeSpan? TTL)
+        public static async Task<byte[]> GetOrSetAsync(this IDistributedCache cache, string key, Func<Task<byte[]>> value, TimeSpan? TTL, CancellationToken token = default)
         {
-            byte[] result = await cache.GetAsync(key);
+            byte[] result = await cache.GetAsync(key, token);
             if (result == null)
             {
                 result = await value();
 
                 if (result != null)
                 {
-                    await cache.SetAsync(key, result, new DistributedCacheEntryOptions() { AbsoluteExpirationRelativeToNow = TTL });
+                    await cache.SetAsync(key, result, new DistributedCacheEntryOptions() { AbsoluteExpirationRelativeToNow = TTL }, token);
                 }
             }
             return result;
@@ -35,17 +37,18 @@ namespace Microsoft.Extensions.Caching.Distributed
         /// <param name="key">The key.</param>
         /// <param name="value">The value.</param>
         /// <param name="TTL">The TTL.</param>
+        /// <param name="token">The token.</param>
         /// <returns></returns>
-        public static async Task<string> GetOrSetStringAsync(this IDistributedCache cache, string key, Func<Task<string>> value, TimeSpan? TTL)
+        public static async Task<string> GetOrSetStringAsync(this IDistributedCache cache, string key, Func<Task<string>> value, TimeSpan? TTL, CancellationToken token = default)
         {
-            string result = await cache.GetStringAsync(key);
+            string result = await cache.GetStringAsync(key, token);
             if (result == null)
             {
                 result = await value();
 
                 if (result != null)
                 {
-                    await cache.SetStringAsync(key, result, new DistributedCacheEntryOptions() { AbsoluteExpirationRelativeToNow = TTL });
+                    await cache.SetStringAsync(key, result, new DistributedCacheEntryOptions() { AbsoluteExpirationRelativeToNow = TTL }, token);
                 }
             }
             return result;
